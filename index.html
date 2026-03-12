@@ -236,20 +236,20 @@
   .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
   .calendar-title { font-family: 'Playfair Display', serif; font-size: 20px; }
 
-  .legend { display: flex; gap: 16px; font-size: 11px; color: var(--muted); }
-  .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+  .legend { display: flex; gap: 12px; font-size: 11px; color: var(--muted); flex-wrap: wrap; }
+  .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
 
   .grid-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 4px;
+    margin-bottom: 4px;
   }
 
   .day-name {
     text-align: center;
     font-size: 10px;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.1em;
     color: var(--muted);
     text-transform: uppercase;
     padding-bottom: 8px;
@@ -261,19 +261,20 @@
   .grid-cells {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
+    gap: 4px;
   }
 
   .day-cell {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 8px;
-    min-height: 90px;
+    border-radius: 8px;
+    padding: 8px 6px;
+    min-height: 80px;
     transition: transform 0.15s, box-shadow 0.15s;
+    overflow: hidden;
   }
 
-  .day-cell:not(.empty):not(.weekend):hover {
+  .day-cell:not(.empty):not(.weekend):not(.future):hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     border-color: rgba(201,168,76,0.3);
@@ -284,47 +285,69 @@
   .day-cell.weekend {
     background: rgba(255,255,255,0.01);
     border-color: rgba(255,255,255,0.03);
-    opacity: 0.38;
+    opacity: 0.35;
+  }
+
+  /* Future workdays - muted blue-grey tint, clearly pending */
+  .day-cell.future {
+    background: rgba(76, 168, 201, 0.03);
+    border-color: rgba(76, 168, 201, 0.12);
+    opacity: 0.65;
   }
 
   .day-cell.earned {
-    background: rgba(74,222,128,0.04);
-    border-color: rgba(74,222,128,0.2);
+    background: rgba(74, 222, 128, 0.05);
+    border-color: rgba(74, 222, 128, 0.22);
   }
 
   .day-cell.today {
     border-color: var(--accent) !important;
     box-shadow: 0 0 0 2px var(--glow);
-    background: rgba(201,168,76,0.06) !important;
+    background: rgba(201,168,76,0.07) !important;
     opacity: 1 !important;
   }
 
   .day-cell.empty { background: transparent; border-color: transparent; }
 
-  .day-num { font-size: 11px; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
-  .day-cell.earned .day-num,
-  .day-cell.today .day-num { color: var(--text); }
+  .day-num { font-size: 11px; font-weight: 500; color: var(--muted); margin-bottom: 5px; }
+  .day-cell.earned .day-num { color: var(--text); }
   .day-cell.today .day-num { color: var(--accent); font-weight: 700; }
+  .day-cell.future .day-num { color: #4b5563; }
 
-  .wknd-label { font-size: 10px; color: #374151; letter-spacing: 0.08em; text-transform: uppercase; }
+  .wknd-label { font-size: 9px; color: #374151; letter-spacing: 0.06em; text-transform: uppercase; }
 
-  .day-salary { font-size: 11px; color: var(--earned); font-weight: 500; line-height: 1.4; }
-  .day-total-amt { font-size: 10px; color: var(--accent2); margin-top: 2px; line-height: 1.4; }
+  .day-salary { font-size: 10px; color: var(--earned); font-weight: 500; line-height: 1.4; }
+  .day-cell.future .day-salary { color: #2d6a4f; opacity: 0.7; }
+  .day-total-amt { font-size: 9px; color: var(--accent2); margin-top: 2px; line-height: 1.4; }
+  .day-cell.future .day-total-amt { opacity: 0.5; }
   .day-cumulative {
     font-size: 9px;
     color: var(--muted);
-    margin-top: 4px;
-    padding-top: 4px;
+    margin-top: 3px;
+    padding-top: 3px;
     border-top: 1px solid var(--border);
     line-height: 1.4;
   }
 
-  .pending-text { font-size: 10px; color: #374151; margin-top: 4px; }
+  .pending-text { font-size: 9px; color: #374151; margin-top: 4px; }
 
-  @media (max-width: 580px) {
-    .day-cell { min-height: 70px; padding: 7px 5px; }
+  /* Mobile: compact single-line cells */
+  @media (max-width: 600px) {
+    .grid-days, .grid-cells { gap: 3px; }
+    .day-cell { min-height: 58px; padding: 6px 4px; border-radius: 6px; }
+    .day-num { font-size: 10px; margin-bottom: 3px; }
     .day-salary { font-size: 9px; }
-    .day-total-amt, .day-cumulative { display: none; }
+    .day-total-amt { display: none; }
+    .day-cumulative { display: none; }
+    .wknd-label { font-size: 8px; }
+    .day-name { font-size: 9px; letter-spacing: 0.04em; }
+    .calendar-title { font-size: 16px; }
+  }
+
+  @media (max-width: 400px) {
+    .day-cell { min-height: 48px; padding: 5px 3px; }
+    .day-salary { font-size: 8px; }
+    .day-num { font-size: 9px; }
   }
 </style>
 </head>
@@ -342,18 +365,18 @@
       <label>Annual Base Salary</label>
       <div class="input-wrap">
         <span class="currency">$</span>
-        <input type="number" id="salary" placeholder="60000" min="0" step="1000">
+        <input type="number" id="salary" placeholder="e.g. 75,000" min="0" step="1000">
       </div>
-      <div class="field-note">Your gross annual salary</div>
+      <div class="field-note">Enter your gross annual salary</div>
     </div>
 
     <div class="field">
       <label>Monthly Benefits / Extras</label>
       <div class="input-wrap">
         <span class="currency">$</span>
-        <input type="number" id="benefits" placeholder="500" min="0" step="50">
+        <input type="number" id="benefits" placeholder="e.g. 500" min="0" step="50">
       </div>
-      <div class="field-note">Bonuses, allowances, perks</div>
+      <div class="field-note">Bonuses, allowances &amp; perks per month</div>
     </div>
 
     <div class="month-row">
@@ -422,8 +445,8 @@
   <div class="calendar-header">
     <div class="calendar-title" id="cal-title">Monthly Calendar</div>
     <div class="legend">
-      <span><span class="legend-dot" style="background:var(--earned)"></span>Base</span>
-      <span><span class="legend-dot" style="background:var(--accent2)"></span>+Benefits</span>
+      <span><span class="legend-dot" style="background:var(--earned)"></span>Earned</span>
+      <span><span class="legend-dot" style="background:rgba(76,168,201,0.4)"></span>Upcoming</span>
       <span><span class="legend-dot" style="background:#374151"></span>Weekend</span>
     </div>
   </div>
@@ -570,11 +593,13 @@
       var isToday = isCurrent && d === today;
       var earned  = (past || isToday) && !weekend;
 
+      var isFuture = !weekend && !earned && !isToday;
       var cell = document.createElement('div');
       cell.className = 'day-cell' +
-        (weekend ? ' weekend' : '') +
-        (earned  ? ' earned'  : '') +
-        (isToday ? ' today'   : '');
+        (weekend  ? ' weekend' : '') +
+        (earned   ? ' earned'  : '') +
+        (isToday  ? ' today'   : '') +
+        (isFuture ? ' future'  : '');
 
       var html = '<div class="day-num">' + d + '</div>';
 
